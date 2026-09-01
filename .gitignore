@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Experiment outputs
+experiments/results/
+experiments/checkpoints/
+
+# Model files
+*.pt
+*.pth
+*.zip
