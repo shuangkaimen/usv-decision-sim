@@ -25,3 +25,6 @@ experiments/checkpoints/
 *.pt
 *.pth
 *.zip
+
+# Local agent memory and daily maintenance notes
+.agent/
