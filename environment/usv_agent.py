@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 import math
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import numpy as np
 
@@ -22,7 +22,7 @@ class UsvAgent:
 
     def __init__(
         self,
-        agent_id: Union[str, int],
+        agent_id: str | int,
         *,
         v_min: float = 0.0,
         v_max: float = 2.0,
@@ -84,7 +84,7 @@ class UsvAgent:
 
     def apply_action(
         self,
-        action: Union[Sequence[float], np.ndarray],
+        action: Sequence[float] | np.ndarray,
         dt: float,
     ) -> None:
         """执行一个仿真步的速度动作并更新自身运动状态。
