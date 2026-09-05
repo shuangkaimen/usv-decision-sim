@@ -5,7 +5,7 @@
 ## 导入
 
 ```python
-from environment.usv_agent import UsvAgent
+from usv_decision_sim.environment import UsvAgent
 ```
 
 ## 构造函数
@@ -78,4 +78,4 @@ agent.apply_action([1.0, 0.0], dt=1.0)
 state = agent.get_state()  # [2.0, 2.0, 0.0, 1.0, 0.0]
 ```
 
-公开类和方法的中文 docstring、关键行内注释以及实现细节位于 [environment/usv_agent.py](../environment/usv_agent.py)。
+公开类和方法的中文 docstring、关键行内注释以及实现细节位于 [src/usv_decision_sim/environment/usv_agent.py](../src/usv_decision_sim/environment/usv_agent.py)。

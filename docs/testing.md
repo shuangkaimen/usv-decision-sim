@@ -4,6 +4,8 @@
 
 当前单元测试位于 [`tests/test_usv_agent.py`](../tests/test_usv_agent.py)，覆盖 `UsvAgent` 的接口合法性、状态不变量和二维一阶运动学更新。
 
+项目采用 `src/` 布局。首次使用或源码结构变更后，在项目根目录执行 `python -m pip install -e .`，再运行 `pytest`。
+
 在项目根目录运行：
 
 ```bash

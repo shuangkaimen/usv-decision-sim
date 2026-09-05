@@ -5,7 +5,7 @@ import math
 import numpy as np
 import pytest
 
-from environment.usv_agent import UsvAgent
+from usv_decision_sim.environment import UsvAgent
 
 # =============================================================================
 # 基础运动学测试

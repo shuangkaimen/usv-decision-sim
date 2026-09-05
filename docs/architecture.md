@@ -26,7 +26,7 @@ UsvAgent
 
 | 模块 | 负责内容 | 不负责内容 |
 | --- | --- | --- |
-| `environment.UsvAgent` | 自身状态、二维运动学、动作约束、几何尺寸 | 地图、奖励、碰撞判定、训练、Observation |
+| `usv_decision_sim.environment.UsvAgent` | 自身状态、二维运动学、动作约束、几何尺寸 | 地图、奖励、碰撞判定、训练、Observation |
 | `Environment`（逐步建设） | 地图、目标、障碍物、碰撞、奖励、终止、Observation 构造 | PPO 网络结构 |
 | `Policy / PPO`（逐步建设） | 根据 Observation 输出 Action | 修改地图和 Agent 内部状态 |
 | `experiments`（逐步建设） | 训练、评估、配置、随机种子、统计 | 改变实体模型语义 |
