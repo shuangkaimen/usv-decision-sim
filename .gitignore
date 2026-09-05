@@ -27,4 +27,5 @@ experiments/checkpoints/
 *.zip
 
 # Local agent memory and daily maintenance notes
-.agent/
+.project_manager/
+project-memory-manager/
