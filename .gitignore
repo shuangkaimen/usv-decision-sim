@@ -4,6 +4,10 @@ __pycache__/
 
 # Pytest
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
 # Virtual environment
 .venv/
