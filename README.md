@@ -14,7 +14,7 @@ pytest
 
 ## 文档
 
-项目文档按主题组织在 [`docs/`](docs/) 目录：
+项目文档按“核心技术文档 + 开发实践指南”组织，完整导航见 [`docs/README.md`](docs/README.md)：
 
 - [系统架构](docs/architecture.md)
 - [API 与接口契约](docs/api.md)
@@ -22,3 +22,4 @@ pytest
 - [算法与决策边界](docs/algorithm.md)
 - [测试与验收](docs/testing.md)
 - [项目知识与建模约定](docs/knowledge.md)
+- [日志与调试指南](docs/guides/logging_and_debugging.md)

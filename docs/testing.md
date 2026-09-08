@@ -2,7 +2,10 @@
 
 ## 测试入口
 
-当前单元测试位于 [`tests/test_usv_agent.py`](../tests/test_usv_agent.py)，覆盖 `UsvAgent` 的接口合法性、状态不变量和二维一阶运动学更新。
+当前测试按职责拆分：
+
+- [`tests/test_usv_agent.py`](../tests/test_usv_agent.py)：覆盖 `UsvAgent` 的接口合法性、状态不变量和二维一阶运动学更新；
+- [`tests/test_logging_and_debugging.py`](../tests/test_logging_and_debugging.py)：覆盖日志级别、控制台输出、文件输出、重复配置和参数校验。
 
 项目采用 `src/` 布局。首次使用或源码结构变更后，在项目根目录执行 `python -m pip install -e .`，再运行 `pytest`。
 
@@ -53,3 +56,5 @@ assert agent.x == 1.0
 ## 测试扩展方向
 
 Environment 实现后，应补充地图边界、障碍物碰撞、奖励、终止条件和 Observation 维度测试；多智能体与动态障碍物应增加确定性种子下的回归测试。算法实验则应单独验证动作空间、Observation 归一化和训练/评估流程，不把训练结果测试混入实体层单元测试。
+
+日志相关测试保持在工具层，重点验证配置行为和输出边界；业务模块只需验证是否在关键状态转换和异常路径上写入了必要上下文，不应把日志文本格式作为业务算法测试的核心断言。

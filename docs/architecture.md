@@ -43,4 +43,4 @@ UsvAgent
 
 `UsvAgent` 保持轻量、独立的实体层，不依赖 PPO、Gymnasium 或具体 Environment 实现。这样可以在没有训练框架的情况下单独运行和测试运动学；上层环境也可以替换策略实现而不改变实体接口。
 
-更完整的建模冻结项见 [knowledge.md](knowledge.md)，实体接口见 [api.md](api.md)，仿真步推进规则见 [simulation.md](simulation.md)。
+更完整的建模冻结项见 [knowledge.md](knowledge.md)，实体接口见 [api.md](api.md)，仿真步推进规则见 [simulation.md](simulation.md)。开发实践和日志约定见 [guides/logging_and_debugging.md](guides/logging_and_debugging.md)。
