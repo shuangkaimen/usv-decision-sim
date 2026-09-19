@@ -34,6 +34,7 @@ UsvAgent
 ## 状态与数据流
 
 - `UsvAgent` 内部 State 固定为 `[x, y, psi, v, omega]`，只描述自身物理状态。
+- `UsvAgent.get_state_tensor()` 将同一内部状态转换为 PyTorch 张量，供后续 DQN/PPO 算法层消费；字段顺序和物理含义与 `get_state()` 完全一致。该方法当前为 Week 1-4 原型，Week 5 冻结环境接口时迁移到 Environment/Observation 构造层。
 - Environment 读取 Agent 状态，并结合目标、地图和障碍物构造 Observation。
 - Policy/PPO 只消费 Observation 并生成 `[v_cmd, omega_cmd]` Action。
 - Environment 决定 `dt`，将 Action 和 `dt` 传给 Agent；Agent 不绑定仿真时钟。
@@ -41,6 +42,6 @@ UsvAgent
 
 ## 依赖边界
 
-`UsvAgent` 保持轻量、独立的实体层，不依赖 PPO、Gymnasium 或具体 Environment 实现。这样可以在没有训练框架的情况下单独运行和测试运动学；上层环境也可以替换策略实现而不改变实体接口。
+`UsvAgent` 保持轻量、独立的实体层，不依赖 PPO、Gymnasium 或具体 Environment 实现。`get_state_tensor()` 会按需导入 PyTorch，实体层核心仍保持 NumPy 语义；这样可以在没有训练框架的情况下单独运行和测试运动学，同时为算法层提供张量入口。该张量入口为 Week 1-4 原型，Week 5 冻结环境接口时迁移到 Environment/Observation 层。上层环境也可以替换策略实现而不改变实体接口。
 
 更完整的建模冻结项见 [knowledge.md](knowledge.md)，实体接口见 [api.md](api.md)，仿真步推进规则见 [simulation.md](simulation.md)。开发实践和日志约定见 [guides/logging_and_debugging.md](guides/logging_and_debugging.md)。

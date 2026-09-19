@@ -4,6 +4,7 @@ import math
 
 import numpy as np
 import pytest
+import torch
 
 from usv_decision_sim.environment import UsvAgent
 
@@ -144,6 +145,51 @@ def test_get_state_returns_independent_array() -> None:
     assert state[0] == pytest.approx(999.0)
     assert agent.x == pytest.approx(1.0)
     np.testing.assert_allclose(agent.get_state(), [1.0, 2.0, 0.0, 0.0, 0.0])
+
+
+# =============================================================================
+# 状态张量化测试
+# =============================================================================
+
+
+def test_get_state_tensor_matches_numpy_state() -> None:
+    """验证张量版状态与 NumPy 状态内容一致且形状为 (5,)。"""
+    agent = UsvAgent("test-usv")
+    agent.reset(1.0, -2.0, math.pi / 2.0)
+    agent.apply_action([0.5, 0.1], dt=1.0)
+
+    state_tensor = agent.get_state_tensor()
+
+    assert isinstance(state_tensor, torch.Tensor)
+    assert state_tensor.shape == (5,)
+    torch.testing.assert_close(
+        state_tensor,
+        torch.tensor(agent.get_state(), dtype=torch.float64),
+    )
+
+
+def test_get_state_tensor_returns_independent_tensor() -> None:
+    """验证修改张量返回值不会改变 Agent 内部状态。"""
+    agent = UsvAgent("test-usv")
+    agent.reset(3.0, 4.0, 0.0)
+
+    state_tensor = agent.get_state_tensor()
+    state_tensor[0] = -999.0
+
+    assert agent.x == pytest.approx(3.0)
+    np.testing.assert_allclose(agent.get_state(), [3.0, 4.0, 0.0, 0.0, 0.0])
+
+
+def test_get_state_tensor_respects_dtype() -> None:
+    """验证可显式指定张量 dtype，缺省时保持 float64。"""
+    agent = UsvAgent("test-usv")
+    agent.reset(0.0, 0.0, 0.0)
+
+    default_tensor = agent.get_state_tensor()
+    float32_tensor = agent.get_state_tensor(dtype=torch.float32)
+
+    assert default_tensor.dtype == torch.float64
+    assert float32_tensor.dtype == torch.float32
 
 
 # =============================================================================

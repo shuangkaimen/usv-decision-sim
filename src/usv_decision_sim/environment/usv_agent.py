@@ -8,8 +8,12 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
+
+if TYPE_CHECKING:
+    import torch
 
 
 class UsvAgent:
@@ -136,6 +140,28 @@ class UsvAgent:
         该方法只提供几何位置，不执行碰撞检测；碰撞判定由 Environment 负责。
         """
         return np.array([self.x, self.y], dtype=np.float64)
+
+    def get_state_tensor(
+        self,
+        *,
+        device: str | torch.device | None = None,
+        dtype: torch.dtype | None = None,
+    ) -> torch.Tensor:
+        """返回自身状态 `[x, y, psi, v, omega]` 的 PyTorch 张量副本。
+
+        该方法是 Day8「状态张量化」的入口，供后续 DQN/PPO 等算法层消费。
+        返回值为新建张量，修改返回值不会影响 Agent 内部状态；`device` 和
+        `dtype` 缺省时由 `torch.tensor` 根据 NumPy 状态数组推断，上层
+        Environment 可按需显式指定训练设备与 float32。
+
+        原型说明：当前按 Week 1-4 教学原型放在 `UsvAgent` 实体层；Week 5
+        冻结正式 Environment 接口时应迁移到 Environment/Observation 构造层，
+        实体层最终不负责张量转换。
+        """
+        import torch
+
+        state = self.get_state()
+        return torch.tensor(state, dtype=dtype, device=device)
 
     def _integrate_kinematics(self, dt: float) -> None:
         """按照 V1.0 一阶二维运动学推进一个时间步。

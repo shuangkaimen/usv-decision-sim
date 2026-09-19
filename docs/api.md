@@ -38,6 +38,7 @@ UsvAgent(
 | `apply_action(action, dt)` | `[v_cmd, omega_cmd]`、正数 `dt` | 限幅并推进一个仿真步 | 位置使用更新前航向计算 |
 | `get_state()` | 无 | 返回 `[x, y, psi, v, omega]` 状态副本 | 不构造 Observation |
 | `get_pos()` | 无 | 返回 `[x, y]` 位置副本 | 不执行碰撞检测 |
+| `get_state_tensor(device=None, dtype=None)` | 可选 `device`、`dtype` | 返回同样内容的 PyTorch 张量副本 | 状态内容与 `get_state()` 一致，不构造 Observation；Week 1-4 原型，Week 5 迁移到 Environment/Observation 层 |
 | `_normalize_angle(angle)` | 有限角度 | 返回 `[-pi, pi)` 内的角度 | `pi` 统一表示为 `-pi` |
 
 ## 状态不变量
@@ -57,6 +58,7 @@ UsvAgent(
 - 执行动作后，`v ∈ [v_min, v_max]`，`omega ∈ [-omega_max, omega_max]`。
 - `reset()` 后 `v = 0`、`omega = 0`。
 - `get_state()` 返回数组顺序固定为 `[x, y, psi, v, omega]`，并且是新建的 NumPy 数组。
+- `get_state_tensor()` 返回与 `get_state()` 内容一致的新建 PyTorch 张量，供算法层消费；缺省 `dtype` 时按 NumPy 数组推断为 `float64`，上层可按需指定 `float32` 与设备。该方法为 Week 1-4 教学原型，Week 5 冻结正式环境接口时应迁移到 Environment/Observation 层。
 
 ## 错误处理
 
@@ -76,6 +78,8 @@ agent.reset(1.0, 2.0, 0.0)
 agent.apply_action([1.0, 0.0], dt=1.0)
 
 state = agent.get_state()  # [2.0, 2.0, 0.0, 1.0, 0.0]
+
+state_tensor = agent.get_state_tensor(dtype=torch.float32)  # shape (5,)
 ```
 
 公开类和方法的中文 docstring、关键行内注释以及实现细节位于 [src/usv_decision_sim/environment/usv_agent.py](../src/usv_decision_sim/environment/usv_agent.py)。

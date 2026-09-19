@@ -9,6 +9,7 @@ description = "无人集群智能决策与协同仿真平台"
 requires-python = ">=3.11"
 dependencies = [
     "numpy>=2.0",
+    "torch>=2.0",
 ]
 
 [tool.setuptools.packages.find]
