@@ -83,3 +83,29 @@ state_tensor = agent.get_state_tensor(dtype=torch.float32)  # shape (5,)
 ```
 
 公开类和方法的中文 docstring、关键行内注释以及实现细节位于 [src/usv_decision_sim/environment/usv_agent.py](../src/usv_decision_sim/environment/usv_agent.py)。
+
+## 学习模块 UsvControlMlp（Day9 原型）
+
+```python
+from usv_decision_sim.learning import UsvControlMlp, USV_STATE_DIM, USV_ACTION_DIM
+```
+
+`UsvControlMlp` 是一个简单前馈网络，把 5 维 USV 内部 State
+`[x, y, psi, v, omega]` 映射为 2 维动作 `[v_cmd, omega_cmd]`。当前只作
+训练链路与 MLP 骨架的教学原型，不负责动作限幅、Observation 构造或真实
+环境交互。
+
+| 参数 | 默认值 | 含义 |
+| --- | --- | --- |
+| `state_dim` | `5` | 输入维度，对应 USV 状态 |
+| `action_dim` | `2` | 输出维度，对应 USV 动作 |
+| `hidden_sizes` | `(64, 64)` | 隐藏层宽度；空元组退化为线性映射 |
+
+- `forward(state)`：输入形状 `(..., state_dim)`，输出形状
+  `(..., action_dim)` 的未归一化动作。
+- 动作限幅由下游 `Environment` / `UsvAgent` 负责。
+- 该模块为 Week 1-4 原型；Week 5 冻结正式 Environment 接口后，输入应切换
+  为 Observation，输出语义以实验配置为准。
+
+最小训练脚本见 [scripts/train_usv_mlp.py](../scripts/train_usv_mlp.py)，演示
+数据 → 模型 → 损失 → 优化器更新的完整链路。
