@@ -6,6 +6,33 @@
 
 当前实体模型的准确定位是 **USV-inspired planar kinematic abstraction**：受无人艇任务启发的二维平面运动学抽象模型，不等同于真实无人艇水动力学仿真。
 
+## 模块划分
+
+本节是模块位置与实现状态的唯一文档事实来源，项目记忆和计划引用本节，
+不另行维护位置表。运行时代码统一放在 `src/usv_decision_sim/` 下，通过
+`pyproject.toml` 打包；测试和实验入口通过 `usv_decision_sim.*` 导入核心库。
+
+| 模块 | 位置 | 状态与职责 |
+| --- | --- | --- |
+| `usv_decision_sim.environment` | `src/usv_decision_sim/environment/` | 已实现单艇 `UsvAgent`；完整 Environment 后续建设 |
+| `usv_decision_sim.control` | `src/usv_decision_sim/control/` | 已实现标量 PID 与航点控制基线 |
+| `usv_decision_sim.learning` | `src/usv_decision_sim/learning/` | 已实现教学型控制 MLP，不代表正式 DQN/PPO |
+| `usv_decision_sim.utils` | `src/usv_decision_sim/utils/` | 已实现日志等通用基础设施 |
+| `usv_decision_sim.rl` | `src/usv_decision_sim/rl/`（规划位置，尚未创建） | V1 强化学习策略与可复用算法组件 |
+| `usv_decision_sim.planning` | `src/usv_decision_sim/planning/`（规划位置，尚未创建） | V1 A*、APF 等传统规划实现 |
+| MARL 相关模块 | 核心包内，具体子包边界待多艇阶段确定 | V1 多艇环境与协同算法，按实际职责划分 |
+| LLM / Agent 相关模块 | V2 启动后确定 | V1 阶段不创建占位模块 |
+| 实验与配置 | `experiments/`、`configs/` | 实验编排、评估、统计和配置输入，调用核心库 |
+| 命令行脚本 | `scripts/` | 教学、训练和批处理入口，调用核心库 |
+| 测试 | `tests/` | 测试已安装的项目 |
+| 正式文档 | `docs/` | 模块、接口、建模与验证约定 |
+| 项目记忆与计划 | `.project_manager/` | 当前状态、计划与交接，引用正式技术文档 |
+
+尚未实现的模块按需创建，不预先建立空包。核心库不反向依赖实验或一次性
+脚本。可复用的策略、rollout 和算法组件放入核心包，训练参数、运行编排、
+checkpoint 和结果统计归实验侧。共享实验配置按需放入 `configs/`，专属配置
+随实验保存，同一参数不在多个地方手工维护。
+
 ## 分层职责
 
 ```text

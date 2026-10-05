@@ -6,15 +6,26 @@
 
 - [`tests/test_usv_agent.py`](../tests/test_usv_agent.py)：覆盖 `UsvAgent` 的接口合法性、状态不变量和二维一阶运动学更新；
 - [`tests/test_pid_controller.py`](../tests/test_pid_controller.py)：覆盖 P-Day10 PID 计算、航点误差、停止容差和 Agent 接口连接；
+- [`tests/test_usv_mlp.py`](../tests/test_usv_mlp.py)：覆盖教学型 MLP 的输入输出、参数和梯度；
 - [`tests/test_logging_and_debugging.py`](../tests/test_logging_and_debugging.py)：覆盖日志级别、控制台输出、文件输出、重复配置和参数校验。
 
-项目采用 `src/` 布局。首次使用或源码结构变更后，在项目根目录执行 `python -m pip install -e .`，再运行 `pytest`。
-
-在项目根目录运行：
+项目采用 `src/` 布局。开发和测试前必须在选定的虚拟环境中安装项目及开发
+依赖，然后在项目根目录运行测试：
 
 ```bash
-pytest
+python -m pip install -e ".[dev]"
+python -m pytest
 ```
+
+pytest 配置统一位于 `pyproject.toml`，不设置 `pythonpath = src`。IDE / PyCharm
+运行单测时也应使用上述环境的解释器。可编辑安装后，普通源码修改无需重装；
+修改包结构、依赖声明或入口点后重新安装。当前仓库没有 CI 配置，未来 CI
+应执行相同的先安装、后测试流程。
+
+日常开发使用可编辑安装验证接口与行为；它不能单独证明 wheel 的内容完整。
+发布或源码布局变更时，还应构建 wheel，在仓库外的独立环境中安装并验证
+导入和测试，避免仓库路径掩盖遗漏。依赖声明与安装见
+[README 的依赖说明](../README.md#依赖管理)。
 
 ## 运动学验收矩阵
 
