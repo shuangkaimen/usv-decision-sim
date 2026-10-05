@@ -35,6 +35,29 @@ Observation 应优先采用相对量，以增强策略在不同地图和起终�
 - Environment：统一执行状态读取、Observation 构造、奖励与终止判定，并把 Action 交给 Agent。
 - UsvAgent：只执行限幅后的速度动作和运动学积分，不依赖 PPO、Stable-Baselines3 或具体规划器。
 
+## PID 航点基线
+
+P-Day10 的 PID baseline 使用两个相互独立的控制回路：
+
+```text
+distance_error = hypot(target_x - x, target_y - y)
+heading_error = wrap(atan2(target_y - y, target_x - x) - psi)
+
+v_cmd = distance_pid(distance_error, dt)
+omega_cmd = heading_pid(heading_error, dt)
+```
+
+`distance_error` 的单位为 m，`heading_error` 的单位为 rad 且归一化到
+`[-pi, pi)`；输出分别为 m/s 和 rad/s。控制器先按配置限幅，Agent 再执行
+最终安全限幅。
+
+默认 `position_tolerance=0.05 m`。进入容差后输出 `[0.0, 0.0]`，但这只是
+waypoint controller 的停止容差，不是未来 Environment 的任务成功判据。
+
+当前基线不根据航向误差衰减线速度。目标位于艇后方时可能出现弧线运动或
+短暂远离目标，这是简单基线的已知行为，后续不得在未记录的情况下加入
+`cos(heading_error)` 门控、强制停止或“先转后走”等启发式逻辑。
+
 ## 设计约束
 
 1. 算法层不得把 `[v_cmd, omega_cmd]` 解释成推力或加速度。

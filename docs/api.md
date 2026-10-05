@@ -1,6 +1,6 @@
 # API 与接口契约
 
-本文档描述当前已实现的 `UsvAgent` V1.0 公共接口。接口稳定性优先于复杂继承层次；当前不建立抽象基类。
+本文档描述当前已实现的 `UsvAgent` V1.0、PID 与航点控制公共接口。接口稳定性优先于复杂继承层次；当前不建立抽象基类。
 
 ## 导入
 
@@ -83,6 +83,47 @@ state_tensor = agent.get_state_tensor(dtype=torch.float32)  # shape (5,)
 ```
 
 公开类和方法的中文 docstring、关键行内注释以及实现细节位于 [src/usv_decision_sim/environment/usv_agent.py](../src/usv_decision_sim/environment/usv_agent.py)。
+
+## PID 与航点控制器
+
+```python
+from usv_decision_sim.control import PidController, WaypointPidController
+```
+
+`PidController` 对一个标量误差执行离散 PID 更新。调用方必须显式提供
+`kp`、`ki`、`kd`、`output_min` 和 `output_max`，避免在 P-Day11 参数实验前
+提前冻结增益。首次更新的微分项为零；`reset()` 清除积分项和上一次误差。
+
+`WaypointPidController` 组合相互独立的距离 PID 与航向 PID：
+
+```python
+action = controller.compute_action(
+    current_pose=(x, y, psi),
+    target_position=(target_x, target_y),
+    dt=dt,
+)
+```
+
+| 名称 | 单位 | 含义 |
+| --- | --- | --- |
+| `distance_error` | m | 当前位置到目标点的欧氏距离 |
+| `heading_error` | rad | `target_bearing - psi`，归一化到 `[-pi, pi)` |
+| `linear_velocity_command` / `v_cmd` | m/s | 距离 PID 的限幅输出 |
+| `angular_velocity_command` / `omega_cmd` | rad/s | 航向 PID 的限幅输出 |
+| `position_tolerance` | m | 航点控制器停止容差，默认 `0.05` |
+| `dt` | s | 控制周期，必须为正有限数值 |
+
+返回值为形状 `(2,)` 的 `float64` NumPy 数组 `[v_cmd, omega_cmd]`，可直接传给
+`UsvAgent.apply_action()`。控制器侧先按自身配置限幅，`UsvAgent` 继续执行最终
+安全限幅；调用方使用自定义 Agent 速度范围时，应同步配置 PID 输出范围。
+
+当 `distance_error <= position_tolerance` 时，控制器重置两个 PID 并返回
+`[0.0, 0.0]`。该容差只表示 waypoint controller 的停止条件，不是后续 v0.3
+Environment 的任务成功判据，二者是否统一要等环境契约冻结后再决定。
+
+P-Day10 保持距离与航向回路独立：目标位于艇后方时，距离 PID 仍可产生正
+`v_cmd`，航向 PID 同时产生 `omega_cmd`。当前不包含航向门控、速度衰减或
+“先转向再前进”等启发式规则。
 
 ## 学习模块 UsvControlMlp（Day9 原型）
 

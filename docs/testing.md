@@ -5,6 +5,7 @@
 当前测试按职责拆分：
 
 - [`tests/test_usv_agent.py`](../tests/test_usv_agent.py)：覆盖 `UsvAgent` 的接口合法性、状态不变量和二维一阶运动学更新；
+- [`tests/test_pid_controller.py`](../tests/test_pid_controller.py)：覆盖 P-Day10 PID 计算、航点误差、停止容差和 Agent 接口连接；
 - [`tests/test_logging_and_debugging.py`](../tests/test_logging_and_debugging.py)：覆盖日志级别、控制台输出、文件输出、重复配置和参数校验。
 
 项目采用 `src/` 布局。首次使用或源码结构变更后，在项目根目录执行 `python -m pip install -e .`，再运行 `pytest`。
@@ -38,6 +39,20 @@ pytest
 | 非法 Action | Action 不是两个有限数值时抛出 `ValueError` |
 | 非法构造参数 | 速度范围、角速度上限和碰撞半径违反约束时抛出 `ValueError` |
 | 非法初始状态 | `reset()` 的位置或航向不是有限数值时抛出 `ValueError` |
+
+## P-Day10 PID 最小验收矩阵
+
+| 测试场景 | 验证内容 |
+| --- | --- |
+| 标量 PID | 纯比例输出和控制器侧限幅正确 |
+| 正前方航点 | 输出正 `v_cmd` 和零 `omega_cmd` |
+| 跨越 `pi` | 航向误差采用 `[-pi, pi)` 内的最短角度 |
+| 停止容差 | 距离不大于 `0.05 m` 时输出 `[0.0, 0.0]` |
+| 艇后目标 | 距离与航向回路独立，不执行速度门控 |
+| Agent 集成 | 输出可直接传给 `UsvAgent.apply_action()` 推进状态 |
+
+完整零误差、饱和、异常输入组合测试和 2–3 组参数实验属于 P-Day11，不在
+P-Day10 最小验收中提前扩展。
 
 ## 封装验证示例
 
